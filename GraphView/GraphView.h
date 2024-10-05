@@ -1,6 +1,6 @@
 ﻿#pragma once
+#include "UIComponents/Application.h"
 
-template <typename Application>
 class GraphViewApplication
 {
 public:
@@ -10,5 +10,5 @@ public:
 	}
 
 private:
-	Application m_application;
+	QtApplication m_application;
 };

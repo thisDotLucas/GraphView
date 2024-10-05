@@ -2,18 +2,11 @@
 #include "QtWidgets/qapplication.h"
 #include "Window.h"
 
-class Application
-{
-public:
-	virtual ~Application() = default;
-	virtual int run() = 0;
-};
-
-class QtApplication : public Application
+class QtApplication
 {
 public:
 	QtApplication() : m_application{ m_nArgs, &m_args } {};
-	int run() override;
+	int run();
 
 private:
 	int				m_nArgs{};

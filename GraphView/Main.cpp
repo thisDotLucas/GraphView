@@ -1,14 +1,11 @@
-#include "QtWidgets/qwidget.h"
-#include "QtWidgets/qapplication.h"
-#include "QtWidgets/qmainwindow.h"
 #include "GraphView.h"
-#include "Adapters/Application.h"
-#include "Adapters/DesignArea.h"
-#include "Adapters/Window.h"
+#include "UIComponents/Application.h"
+#include "UIComponents/DesignArea.h"
+#include "UIComponents/Window.h"
 
 int main(int argc, char *argv[])
 {
-	GraphViewApplication<QtApplication> application;
+	GraphViewApplication application;
 
 	QtWindow window{ "Test" };
 	QtDesignArea designArea{ window };
