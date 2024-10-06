@@ -1,14 +1,26 @@
 #pragma once
-#include "QtWidgets/qmainwindow.h"
+#include <QApplication>
+#include <QMainWindow>
+#include <QToolBar>
+#include <QAction>
+#include <QLabel>
+#include <QWidget>
+#include <QStatusBar>
 
-
-class QtWindow
+class QtWindow :public QMainWindow
 {
 public:
 	QtWindow(const std::string& title);
 
+private slots:
+	void onOpen() { statusBar()->showMessage("Open", 2000); }
+    void onSaveAs() { statusBar()->showMessage("Save As", 2000); }
+	void onSettings() { statusBar()->showMessage("Settings", 2000); }
+	void onInsertVertex() { statusBar()->showMessage("Vertex", 2000); }
+	void onInsertEdge() { statusBar()->showMessage("Edge", 2000); }
+	void onRunAlgorithm() { statusBar()->showMessage("Run Algorithm", 2000); }
+
 private:
-	QMainWindow m_window;
 
 	friend class QtDesignArea;
 };

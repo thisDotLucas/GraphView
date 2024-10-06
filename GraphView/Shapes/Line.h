@@ -1,4 +1,4 @@
-#include <qpoint.h>
+#include <QPoint>
 
 class Line
 {

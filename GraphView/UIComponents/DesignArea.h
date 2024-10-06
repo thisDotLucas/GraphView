@@ -1,5 +1,5 @@
 #pragma once
-#include "QtWidgets/qgraphicsview.h"
+#include <QGraphicsView>
 #include "Window.h"
 
 class QtDesignArea : public QGraphicsView

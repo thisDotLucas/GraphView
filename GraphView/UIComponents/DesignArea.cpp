@@ -1,5 +1,5 @@
 #include "DesignArea.h"
-#include "qevent.h"
+#include <QEvent>
 #include "../Utils/Point.h"
 #include "../Entities/Vertex.h"
 
@@ -30,7 +30,7 @@ private:
 	int m_gridsize = 10;
 };
 
-QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.m_window.window() }
+QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.window() }
 {
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -38,7 +38,7 @@ QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.m_window.wi
 	setDragMode(QGraphicsView::NoDrag);
 	setMouseTracking(true);
 
-    parent.m_window.setCentralWidget(this);
+	parent.setCentralWidget(this);
 
     setScene(new Grid(this));
 	setSceneRect(QRect{ 0, 0, width(), height() });

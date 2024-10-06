@@ -1,5 +1,5 @@
 #include "Vertex.h"
-#include "qpainter.h"
+#include <QPainter>
 
 Vertex::Vertex(QPointF point, Circle circle, QColor color) : m_circle{ circle }, m_color{ color }
 {
