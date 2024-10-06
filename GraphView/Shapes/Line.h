@@ -1,14 +1,14 @@
-#include "../Utils/Point.h"
+#include <qpoint.h>
 
 class Line
 {
 public:
-	Line(Point from, Point to) : m_from{ from }, m_to{ to } {}
+	Line(QPointF from, QPointF to) : m_from{ from }, m_to{ to } {}
 
-	Point from() const { return m_from; }
-	Point to() const { return m_to; }
+	QPointF from() const { return m_from; }
+	QPointF to() const { return m_to; }
 
 private:
-	Point m_from;
-	Point m_to;
+	QPointF m_from;
+	QPointF m_to;
 };
