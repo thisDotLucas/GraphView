@@ -1,5 +1,6 @@
 #include "DesignArea.h"
 #include <QEvent>
+#include <QMouseEvent>
 #include "../Utils/Point.h"
 #include "../Entities/Vertex.h"
 
@@ -11,6 +12,10 @@ public:
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override
     {
+		// At some point displaying gridpoints does not make any sense when zoomed out to far.
+		if (views()[0]->transform().m11() < 0.3)
+			return;
+	
 		QPen pen;
 		painter->setPen(pen);
 
@@ -53,4 +58,44 @@ void QtDesignArea::mousePressEvent(QMouseEvent* e)
 	}
 
 	QGraphicsView::mousePressEvent(e);
+}
+
+void QtDesignArea::mouseMoveEvent(QMouseEvent* e)
+{
+	if (e->buttons() & Qt::MiddleButton && m_lastMousePoint.has_value())
+	{
+		const QPointF delta = mapToScene(e->pos()) - m_lastMousePoint.value();
+
+		QRectF sceneR = sceneRect();
+		sceneR.translate(-delta.x(), -delta.y());
+		setSceneRect(sceneR);
+
+		update();
+		e->accept();
+	}
+
+	m_lastMousePoint = mapToScene(e->pos());
+
+	QGraphicsView::mouseMoveEvent(e);
+}
+
+void QtDesignArea::wheelEvent(QWheelEvent* e)
+{
+	const QPointF pos = mapToScene(e->position().toPoint());
+
+	// scale from wheel angle
+	const float delta = 1.0f + e->angleDelta().y() / 1000.0f;
+
+	QRectF sceneR = sceneRect();
+	sceneR.translate((pos - sceneR.center()));
+	setSceneRect(sceneR);
+
+	cursor().setPos(mapToGlobal(mapFromScene(pos.toPoint())));
+
+	scale(delta, delta);
+
+	update();
+	e->accept();
+
+	QGraphicsView::wheelEvent(e);
 }
