@@ -3,6 +3,7 @@
 #include <QLabel>
 #include <QMenu>
 #include <QToolButton>
+#include "DesignArea.h"
 
 QtWindow::QtWindow(const std::string& title)
 {
@@ -55,4 +56,14 @@ QtWindow::QtWindow(const std::string& title)
 	setWindowTitle(title.c_str());
 	setWindowState(Qt::WindowFullScreen);
     showMaximized();
+}
+
+void QtWindow::onInsertVertex()
+{
+    ((QtDesignArea*)(children().back()))->setDrawingContext(VertexDrawingContext{});
+}
+
+void QtWindow::onInsertEdge()
+{
+    ((QtDesignArea*)(children().back()))->setDrawingContext(EdgeDrawingContext{});
 }

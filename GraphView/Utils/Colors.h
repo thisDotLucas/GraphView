@@ -1,3 +1,4 @@
+#pragma once
 #include <QColor>
 
 constexpr auto COLOR_LIGHT_GRAY = QColor(240, 240, 240);

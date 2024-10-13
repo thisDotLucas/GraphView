@@ -3,6 +3,7 @@
 #include <QMouseEvent>
 #include "../Utils/Point.h"
 #include "../Entities/Vertex.h"
+#include "../Drawing/DrawingFunctions.h"
 
 class Grid : public QGraphicsScene
 {
@@ -37,6 +38,9 @@ private:
 
 QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.window() }
 {
+	setMouseTracking(true);
+	setFocusPolicy(Qt::StrongFocus);
+
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setTransformationAnchor(QGraphicsView::NoAnchor);
@@ -47,21 +51,24 @@ QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.window() }
 
     setScene(new Grid(this));
 	setSceneRect(QRect{ 0, 0, width(), height() });
+
+	m_drawingContext = NoneDrawingContext{};
+
+	QCursor cursor{ getCursorShape(m_drawingContext) };
+	setCursor(cursor);
 }
 
 void QtDesignArea::mousePressEvent(QMouseEvent* e)
 {
-	if (e->button() == Qt::MouseButton::RightButton)
-	{
-		scene()->addItem(new Vertex{ mapToScene(e->pos()), Circle{ 15 }, QColor{ 3, 136, 252 } });
-		scene()->update();
-	}
-
 	QGraphicsView::mousePressEvent(e);
+	mousePress(*this, m_drawingContext, *e);
 }
 
 void QtDesignArea::mouseMoveEvent(QMouseEvent* e)
 {
+	QCursor cursor{ getCursorShape(m_drawingContext) };
+	setCursor(cursor);
+
 	if (e->buttons() & Qt::MiddleButton && m_lastMousePoint.has_value())
 	{
 		const QPointF delta = mapToScene(e->pos()) - m_lastMousePoint.value();
@@ -77,6 +84,17 @@ void QtDesignArea::mouseMoveEvent(QMouseEvent* e)
 	m_lastMousePoint = mapToScene(e->pos());
 
 	QGraphicsView::mouseMoveEvent(e);
+}
+
+void QtDesignArea::keyPressEvent(QKeyEvent* event)
+{
+	if (event->key() == Qt::Key_Escape)
+	{
+		m_drawingContext = NoneDrawingContext{};
+		std::ranges::for_each(scene()->items(), [](QGraphicsItem* item) { item->setSelected(false); });
+	}
+
+	QWidget::keyPressEvent(event);
 }
 
 void QtDesignArea::wheelEvent(QWheelEvent* e)

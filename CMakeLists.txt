@@ -14,5 +14,4 @@ project(GraphView)
 
 find_package(Qt6 REQUIRED COMPONENTS Core Widgets)
 
-
 add_subdirectory(GraphView)
