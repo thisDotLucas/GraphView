@@ -1,0 +1,3 @@
+[submodule "GraphView/CppGraphLite"]
+	path = GraphView/CppGraphLite
+	url = https://github.com/thisDotLucas/CppGraphLite.git
