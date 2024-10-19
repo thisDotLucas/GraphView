@@ -58,6 +58,43 @@ QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.window() }
 	setCursor(cursor);
 }
 
+void QtDesignArea::addVertex(QGraphicsItem* vertex)
+{
+	m_graph.insert(getHandle(vertex)); 
+	m_items[getHandle(vertex)] = vertex; 
+}
+
+void QtDesignArea::removeVertex(QGraphicsItem* vertex)
+{
+	m_graph.erase(getHandle(vertex));
+}
+
+void QtDesignArea::addEdge(QGraphicsItem* from, QGraphicsItem* to, QGraphicsItem* edge)
+{
+	Handle fromHandle = getHandle(from);
+	Handle toHandle = getHandle(to);
+
+	m_graph.insert(fromHandle, toHandle, getHandle(edge));
+	m_items[getHandle(edge)] = edge;
+}
+
+std::vector<Handle> QtDesignArea::getEdgesConnectedTo(QGraphicsItem* vertex)
+{
+	std::vector<Handle> edges;
+	for (auto&& to : m_graph.edges(getHandle(vertex)))
+	{
+		const auto from = getHandle(vertex);
+		edges.push_back(m_graph.edgeData(from, to).value());
+	}
+
+	return edges;
+}
+
+bool QtDesignArea::isInEdgeInsertionMode() const
+{
+	return std::holds_alternative<EdgeDrawingContext>(m_drawingContext);
+}
+
 void QtDesignArea::mousePressEvent(QMouseEvent* e)
 {
 	QGraphicsView::mousePressEvent(e);
@@ -92,6 +129,15 @@ void QtDesignArea::keyPressEvent(QKeyEvent* event)
 	{
 		m_drawingContext = NoneDrawingContext{};
 		std::ranges::for_each(scene()->items(), [](QGraphicsItem* item) { item->setSelected(false); });
+	}
+
+	if (event->key() == Qt::Key_Delete)
+	{
+		QList<QGraphicsItem*> selectedItems = scene()->selectedItems();
+		for (QGraphicsItem* item : selectedItems)
+		{
+			delete item;
+		}
 	}
 
 	QWidget::keyPressEvent(event);

@@ -1,6 +1,7 @@
 #pragma once
-#include "Vertex.h"
-#include "Edge.cpp"
-#include <variant>
+#include <QGraphicsItem>
 
-using Entity = std::variant<Vertex, Edge>;
+using Handle = unsigned int;
+
+Handle getHandle(QGraphicsItem* item);
+Handle getNextHandle();

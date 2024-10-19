@@ -1,12 +1,15 @@
 #pragma once
-#include "../Shapes/Line.h"
 #include <QGraphicsLineItem>
+#include "Vertex.h"
 
 class Edge : public QGraphicsLineItem
 {
 public:
-	Edge(Line line);
+	Edge(Vertex* from, Vertex* to);
+
+	void update();
 
 private:
-	Line m_line;
+	Vertex* m_from;
+	Vertex* m_to;
 };

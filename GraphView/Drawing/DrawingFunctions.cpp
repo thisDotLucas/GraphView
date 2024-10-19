@@ -27,7 +27,9 @@ namespace
                 for (auto&& item : designArea.scene()->selectedItems())
                     item->setSelected(false);
 
-                designArea.scene()->addItem(new Edge{ Line{ verticies[0]->rect().center(), verticies[1]->rect().center() }});
+                auto edge = new Edge{ verticies[0], verticies[1] };
+                designArea.scene()->addItem(edge);
+                designArea.addEdge(verticies[0], verticies[1], edge);
 				designArea.scene()->update();
             }
 		}
@@ -37,7 +39,9 @@ namespace
     {	
         if (e.button() == Qt::MouseButton::LeftButton)
 		{
-			designArea.scene()->addItem(new Vertex{ designArea.mapToScene(e.pos()), Circle{ 15 }, QColor{ 3, 136, 252 } });
+            auto vertex = new Vertex{ designArea.mapToScene(e.pos()), Circle{ 15 }, QColor{ 3, 136, 252 } };
+			designArea.scene()->addItem(vertex);
+            designArea.addVertex(vertex);
 			designArea.scene()->update();
 		}
     }

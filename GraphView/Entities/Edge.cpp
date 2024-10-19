@@ -1,10 +1,10 @@
 #include "Edge.h"
+#include "Entity.h"
 #include <QPainter>
 
-Edge::Edge(Line line) : m_line{ line } 
+Edge::Edge(Vertex* from, Vertex* to) : m_from{ from }, m_to{ to }
 {
-	QLineF qline{ line.from(), line.to() };
-	setLine(qline);
+	update();
 
 	QColor black{ 0, 0, 0 };
 	setPen({ black });
@@ -15,5 +15,11 @@ Edge::Edge(Line line) : m_line{ line }
 	setFlag(ItemIsFocusable);
 
 	setZValue(-1.0);
+	setData(0, getNextHandle());
 }
 
+void Edge::update()
+{
+	QLineF qline{ m_from->sceneBoundingRect().center(), m_to->sceneBoundingRect().center() };
+	setLine(qline);
+}
