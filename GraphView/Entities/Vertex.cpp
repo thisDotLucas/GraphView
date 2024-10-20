@@ -1,5 +1,6 @@
 #include "Vertex.h"
 #include "../UIComponents/DesignArea.h"
+#include "../UIComponents/GridScene.h"
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsSceneMouseEvent>
@@ -8,7 +9,10 @@
 
 Vertex::Vertex(QPointF point, Circle circle, QColor color) : m_circle{ circle }, m_color{ color }
 {
-	QRectF rect = QRectF(point.x(), point.y(), circle.radius() * 2, circle.radius() * 2);
+	qreal snappedX = round(point.x() / 10) * 10;
+	qreal snappedY = round(point.y() / 10) * 10;
+
+	QRectF rect = QRectF(snappedX, snappedY, circle.radius() * 2, circle.radius() * 2);
 	rect.translate(-circle.radius(), -circle.radius());
 	setRect(rect);
 
@@ -43,7 +47,15 @@ void Vertex::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 QVariant Vertex::itemChange(GraphicsItemChange change, const QVariant& value)
 {
-	if (change == QGraphicsItem::ItemPositionChange) 
+	if (scene() && change == QGraphicsItem::ItemPositionChange)
+	{
+		int gridSize = dynamic_cast<Grid*>(scene())->gridSize();
+		qreal snappedX = round(value.toPointF().x() / gridSize) * gridSize;
+		qreal snappedY = round(value.toPointF().y() / gridSize) * gridSize;
+
+		return QPointF{ snappedX, snappedY };
+	}
+	else if (QGraphicsItem::ItemPositionHasChanged)
 	{
 		for (const auto& edge : getConnectedEdges())
 			dynamic_cast<Edge*>(edge)->update();
@@ -54,6 +66,9 @@ QVariant Vertex::itemChange(GraphicsItemChange change, const QVariant& value)
 
 std::vector<QGraphicsItem*> Vertex::getConnectedEdges()
 {
+	if (!scene())
+		return {};
+
 	auto designArea = ((QtDesignArea*)scene()->parent());
 
 	std::vector<QGraphicsItem*> edges;
