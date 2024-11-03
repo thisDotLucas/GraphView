@@ -39,7 +39,7 @@ namespace
     {	
         if (e.button() == Qt::MouseButton::LeftButton)
 		{
-            auto vertex = new Vertex{ designArea.mapToScene(e.pos()), Circle{ 15 }, QColor{ 3, 136, 252 } };
+            auto vertex = new Vertex{ designArea.mapToScene(e.pos()), Circle{ 15 } };
 			designArea.scene()->addItem(vertex);
             designArea.addVertex(vertex);
 			designArea.scene()->update();

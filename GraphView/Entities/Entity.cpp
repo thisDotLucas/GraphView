@@ -11,3 +11,8 @@ Handle getNextHandle()
 {
 	return NextHandle++;
 }
+
+void setNextHandle(Handle handle)
+{
+	NextHandle = std::max(NextHandle, handle + 1);
+}
