@@ -3,7 +3,30 @@
 #include <QLabel>
 #include <QMenu>
 #include <QToolButton>
+#include <QDockWidget>
+#include <QComboBox>
+#include <QFileDialog>
+#include <QString>
 #include "DesignArea.h"
+#include "SettingsTab.h"
+#include "ObjectTab.h"
+#include "AlgorithmTab.h"
+#include "../Serialization/Serialize.h"
+
+namespace
+{
+    QString getSaveFilePath(QWidget* parent = nullptr) 
+    {
+        QString filePath = QFileDialog::getSaveFileName(parent, "Save File", "", "JSON Files (*.json);;All Files (*)");
+        return filePath;
+    }
+
+    QString getOpenFilePath(QWidget* parent = nullptr) 
+    {
+		QString filePath = QFileDialog::getOpenFileName(parent, "Open File", "", "JSON Files (*.json);;All Files (*)");
+		return filePath;
+    }
+}
 
 QtWindow::QtWindow(const std::string& title)
 {
@@ -31,19 +54,14 @@ QtWindow::QtWindow(const std::string& title)
     QAction* edgeAction = insertMenu->addAction("Edge");
     insertButton->setMenu(insertMenu);
 
-    QToolButton* runAlgorithmButton = new QToolButton(this);
-    runAlgorithmButton->setText("Run Algorithm");
-
     toolbar->addWidget(fileButton);
     toolbar->addWidget(insertButton);
-    toolbar->addWidget(runAlgorithmButton);
 
     connect(openAction, &QAction::triggered, this, &QtWindow::onOpen);
     connect(saveAsAction, &QAction::triggered, this, &QtWindow::onSaveAs);
     connect(settingsAction, &QAction::triggered, this, &QtWindow::onSettings);
     connect(vertexAction, &QAction::triggered, this, &QtWindow::onInsertVertex);
     connect(edgeAction, &QAction::triggered, this, &QtWindow::onInsertEdge);
-    connect(runAlgorithmButton, &QToolButton::clicked, this, &QtWindow::onRunAlgorithm);
 
     QVBoxLayout* layout = new QVBoxLayout();
     layout->setStretch(0, 1);
@@ -52,18 +70,70 @@ QtWindow::QtWindow(const std::string& title)
     centralWidget->setLayout(layout);
     setCentralWidget(centralWidget);
 
+    QDockWidget* leftPane = new QDockWidget("", this);
+    leftPane->setAllowedAreas(Qt::LeftDockWidgetArea);
+    leftPane->setFeatures(QDockWidget::NoDockWidgetFeatures);    
+    leftPane->setTitleBarWidget(new QWidget());
+
+    m_tab = new QTabWidget(leftPane);
+    m_objectTab = new ObjectTab();
+    m_tab->addTab(new AlgorithmTab(), "Algorithm");
+    m_tab->addTab(m_objectTab, "Object");
+    m_tab->addTab(new SettingsTab(), "Settings");
+
+    leftPane->setWidget(m_tab);
+
+    addDockWidget(Qt::LeftDockWidgetArea, leftPane);
+
     setWindowFlags(Qt::Window);
 	setWindowTitle(title.c_str());
 	setWindowState(Qt::WindowFullScreen);
     showMaximized();
 }
 
+void QtWindow::activateAlgorithmTab()
+{
+    m_tab->setCurrentIndex(0);
+}
+
+void QtWindow::activateObjectTab()
+{
+    m_tab->setCurrentIndex(1);
+}
+
+void QtWindow::activateSettingsTab()
+{
+    m_tab->setCurrentIndex(2);
+}
+
+void QtWindow::setActiveObject(QGraphicsItem* object)
+{
+    m_tab->setCurrentIndex(1);
+    m_objectTab->setActiveObject(object);
+}
+
+void QtWindow::onSaveAs()
+{
+    QString path = getSaveFilePath(this);
+	if (!path.isEmpty()) 
+        saveSceneToFile(((QtDesignArea*)(children().back()))->scene(), path);
+}
+
+void QtWindow::onOpen()
+{
+    QString path = getOpenFilePath(this);
+	if (!path.isEmpty()) 
+        loadSceneFromFile(((QtDesignArea*)(children().back()))->scene(), path);
+}
+
 void QtWindow::onInsertVertex()
 {
+    ((QtDesignArea*)(children().back()))->setSingleSelectionMode();
     ((QtDesignArea*)(children().back()))->setDrawingContext(VertexDrawingContext{});
 }
 
 void QtWindow::onInsertEdge()
 {
+    ((QtDesignArea*)(children().back()))->setMultiSelectionMode();
     ((QtDesignArea*)(children().back()))->setDrawingContext(EdgeDrawingContext{});
 }

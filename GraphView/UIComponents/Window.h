@@ -6,21 +6,31 @@
 #include <QLabel>
 #include <QWidget>
 #include <QStatusBar>
+#include <QGraphicsItem>
+#include "ObjectTab.h"
 
 class QtWindow :public QMainWindow
 {
 public:
 	QtWindow(const std::string& title);
 
+	void activateAlgorithmTab();
+	void activateObjectTab();
+	void activateSettingsTab();
+	void setActiveObject(QGraphicsItem* object);
+
 private slots:
-	void onOpen() { statusBar()->showMessage("Open", 2000); }
-    void onSaveAs() { statusBar()->showMessage("Save As", 2000); }
-	void onSettings() { statusBar()->showMessage("Settings", 2000); }
+	void onOpen();
+	void onSaveAs();
+	void onSettings() {}
 	void onInsertVertex();
 	void onInsertEdge();
-	void onRunAlgorithm() { statusBar()->showMessage("Run Algorithm", 2000); }
+	void onRunAlgorithm() {}
 
 private:
+
+	QTabWidget* m_tab{};
+	ObjectTab* m_objectTab{};
 
 	friend class QtDesignArea;
 };

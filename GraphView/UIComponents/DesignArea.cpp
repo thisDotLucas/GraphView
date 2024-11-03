@@ -54,11 +54,21 @@ std::vector<Handle> QtDesignArea::getEdgesConnectedTo(QGraphicsItem* vertex)
 	std::vector<Handle> edges;
 	for (auto&& to : m_graph.edges(getHandle(vertex)))
 	{
-		const auto from = getHandle(vertex);
+		const Handle from = getHandle(vertex);
 		edges.push_back(m_graph.edgeData(from, to).value());
 	}
 
 	return edges;
+}
+
+void QtDesignArea::setSingleSelectionMode()
+{
+	((Grid*)scene())->setSingleSelection(true);
+}
+
+void QtDesignArea::setMultiSelectionMode()
+{
+	((Grid*)scene())->setSingleSelection(false);
 }
 
 bool QtDesignArea::isInEdgeInsertionMode() const
@@ -99,6 +109,7 @@ void QtDesignArea::keyPressEvent(QKeyEvent* event)
 	if (event->key() == Qt::Key_Escape)
 	{
 		m_drawingContext = NoneDrawingContext{};
+		((Grid*)scene())->setSingleSelection(true);
 		std::ranges::for_each(scene()->items(), [](QGraphicsItem* item) { item->setSelected(false); });
 	}
 

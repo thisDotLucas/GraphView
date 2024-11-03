@@ -17,6 +17,8 @@ public:
 	void addEdge(QGraphicsItem* from, QGraphicsItem* to, QGraphicsItem* edge);
 	QGraphicsItem* getItem(Handle handle) { return m_items.at(handle); }
 	std::vector<Handle> getEdgesConnectedTo(QGraphicsItem* vertex);
+	void setSingleSelectionMode();
+	void setMultiSelectionMode();
 
 	bool isInEdgeInsertionMode() const;
 
