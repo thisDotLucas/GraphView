@@ -1,12 +1,12 @@
-#include "BFSRunner.h"
+#include "DFSRunner.h"
 #include "../Entities/Edge.h"
 #include "EdgeAnimator.h"
 #include <chrono>
 #include <thread>
 
-void BFSRunner::run(QtDesignArea* designArea, Handle start)
+void DFSRunner::run(QtDesignArea* designArea, Handle start)
 {
-	graphlite::algorithm::GraphLiteBFS<decltype(designArea->getGraph())> bfs{};
+	graphlite::algorithm::GraphLiteDFS<decltype(designArea->getGraph())> dfs{};
 
 	EdgeAnimator edgeAnimator{ designArea };
 
@@ -24,5 +24,5 @@ void BFSRunner::run(QtDesignArea* designArea, Handle start)
 		return false;
 	};
 
-	bfs.BFS(designArea->getGraph(), start, f);
+	dfs.DFS(designArea->getGraph(), start, f);
 }

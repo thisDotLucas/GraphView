@@ -1,5 +1,6 @@
 #include "AlgorithmTab.h"
 #include "BFSWidget.h"
+#include "DFSWidget.h"
 #include <QFormLayout>
 #include <QVBoxLayout>
 #include <QComboBox>
@@ -39,7 +40,16 @@ AlgorithmTab::AlgorithmTab(QWidget* parent) : QWidget(parent)
 void AlgorithmTab::setActiveObject(QGraphicsItem* object)
 {
 	if (dynamic_cast<Vertex*>(object))
-		m_algorithmWidget->setStarVertex(getHandle(object));
+	{
+		if (auto widget = dynamic_cast<BFSWidget*>(m_algorithmWidget))
+		{
+			widget->setStarVertex(getHandle(object));
+		}
+		else if (auto widget = dynamic_cast<DFSWidget*>(m_algorithmWidget))
+		{
+			widget->setStarVertex(getHandle(object));
+		}
+	}
 }
 
 void AlgorithmTab::onAlgorithmChanged(int index)
@@ -59,6 +69,7 @@ void AlgorithmTab::onAlgorithmChanged(int index)
 	} 
 	else if (algorithm == "DFS")
 	{
-		qDebug() << "DFS selected";
+		m_algorithmWidget = new DFSWidget(this);
+		((QFormLayout*)layout())->addRow(m_algorithmWidget);
 	}
 }

@@ -16,6 +16,6 @@ private slots:
 	void onAlgorithmChanged(int index);
 
 private:
-	BFSWidget* m_algorithmWidget{};
+	QWidget* m_algorithmWidget{};
     QComboBox* m_algorithmComboBox;
 };
