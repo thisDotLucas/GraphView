@@ -76,9 +76,13 @@ QtWindow::QtWindow(const std::string& title)
     leftPane->setTitleBarWidget(new QWidget());
 
     m_tab = new QTabWidget(leftPane);
+
+    m_algorithmTab = new AlgorithmTab(this);
+    m_tab->addTab(m_algorithmTab, "Algorithm");
+
     m_objectTab = new ObjectTab();
-    m_tab->addTab(new AlgorithmTab(), "Algorithm");
     m_tab->addTab(m_objectTab, "Object");
+
     m_tab->addTab(new SettingsTab(), "Settings");
 
     leftPane->setWidget(m_tab);
@@ -108,7 +112,7 @@ void QtWindow::activateSettingsTab()
 
 void QtWindow::setActiveObject(QGraphicsItem* object)
 {
-    m_tab->setCurrentIndex(1);
+    m_algorithmTab->setActiveObject(object);
     m_objectTab->setActiveObject(object);
 }
 

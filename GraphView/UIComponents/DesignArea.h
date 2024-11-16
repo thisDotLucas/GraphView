@@ -19,6 +19,7 @@ public:
 	std::vector<Handle> getEdgesConnectedTo(QGraphicsItem* vertex);
 	void setSingleSelectionMode();
 	void setMultiSelectionMode();
+	auto getGraph() const { return m_graph; }
 
 	bool isInEdgeInsertionMode() const;
 

@@ -8,6 +8,7 @@
 #include <QStatusBar>
 #include <QGraphicsItem>
 #include "ObjectTab.h"
+#include "AlgorithmTab.h"
 
 class QtWindow :public QMainWindow
 {
@@ -31,6 +32,7 @@ private:
 
 	QTabWidget* m_tab{};
 	ObjectTab* m_objectTab{};
+	AlgorithmTab* m_algorithmTab{};
 
 	friend class QtDesignArea;
 };

@@ -5,7 +5,7 @@ add_executable (GraphView "GraphView.cpp" "GraphView.h" "Main.cpp" "UIComponents
 "Drawing/NoneDrawingContext.h" "Drawing/DrawingContext.cpp" "Drawing/VertexDrawingContext.cpp" "Drawing/EdgeDrawingContext.cpp" "Drawing/NoneDrawingContext.cpp" "Drawing/DrawingFunctions.h"
 "Drawing/DrawingFunctions.cpp" "UIComponents/GridScene.h" "UIComponents/SettingsTab.h" "UIComponents/SettingsTab.cpp" "UIComponents/ObjectTab.h" "UIComponents/ObjectTab.cpp" "UIComponents/AlgorithmTab.h"
 "UIComponents/AlgorithmTab.cpp" "UIComponents/EdgeObjectTabWidget.h" "UIComponents/EdgeObjectTabWidget.cpp" "UIComponents/VertexObjectTabWidget.h" "UIComponents/VertexObjectTabWidget.cpp"
-"Serialization/Serialize.h" "Serialization/Serialize.cpp")
+"Serialization/Serialize.h" "Serialization/Serialize.cpp" "UIComponents/BFSWidget.h" "UIComponents/BFSWidget.cpp" "Algorithms/BFSRunner.h" "Algorithms/BFSRunner.cpp" "Algorithms/Runner.h")
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET GraphView PROPERTY CXX_STANDARD 20)

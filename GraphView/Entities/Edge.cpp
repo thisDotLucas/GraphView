@@ -4,6 +4,7 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 #include "../UIComponents/Window.h"
+#include <QLineF>
 
 Edge::Edge(Vertex* from, Vertex* to) : m_from{ from }, m_to{ to }
 {
@@ -18,7 +19,7 @@ Edge::Edge(QJsonObject json, Vertex* from, Vertex* to) : m_from{ from }, m_to{ t
 	setNextHandle(json["id"].toInt());
 }
 
-void Edge::update()
+void Edge::updateLine()
 {
 	QLineF qline{ m_from->sceneBoundingRect().center(), m_to->sceneBoundingRect().center() };
 	setLine(qline);
@@ -33,6 +34,11 @@ QJsonObject Edge::serialize()
 	json["to"] = static_cast<int>(getHandle(m_to));
 
 	return json;
+}
+
+void Edge::highlight(bool on)
+{
+	glowEffect->setEnabled(on);
 }
 
 void Edge::mousePressEvent(QGraphicsSceneMouseEvent* event)
@@ -55,4 +61,15 @@ void Edge::initalize()
 	setFlag(ItemIsFocusable);
 
 	setZValue(-1.0);
+
+	QPen highlightPen;
+	highlightPen.setColor(QColor(255, 0, 0, 255));
+    highlightPen.setWidth(8);
+
+	glowEffect = new QGraphicsDropShadowEffect();
+    glowEffect->setBlurRadius(15);
+	glowEffect->setColor(QColor(255, 50, 50, 255));
+	glowEffect->setOffset(0, 0);
+    glowEffect->setEnabled(false);
+    setGraphicsEffect(glowEffect);
 }

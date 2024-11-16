@@ -89,7 +89,7 @@ QVariant Vertex::itemChange(GraphicsItemChange change, const QVariant& value)
 	else if (QGraphicsItem::ItemPositionHasChanged)
 	{
 		for (const auto& edge : getConnectedEdges())
-			dynamic_cast<Edge*>(edge)->update();
+			dynamic_cast<Edge*>(edge)->updateLine();
 	}
 
 	return QGraphicsEllipseItem::itemChange(change, value);
