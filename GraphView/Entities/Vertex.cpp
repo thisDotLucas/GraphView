@@ -10,7 +10,6 @@
 
 Vertex::Vertex(QPointF point, Circle circle)
 {
-
 	qreal snappedX = round(point.x() / 10) * 10;
 	qreal snappedY = round(point.y() / 10) * 10;
 
@@ -46,11 +45,14 @@ Vertex::Vertex(QJsonObject json)
 
 Vertex::~Vertex()
 {
-	for (auto& edge : getConnectedEdges())
-		delete edge;
+	if (scene()->views().size() > 0)
+	{
+		for (auto& edge : getConnectedEdges())
+			delete edge;
 
-	auto designArea = ((QtDesignArea*)scene()->parent());
-	designArea->removeVertex(this);
+		auto designArea = ((QtDesignArea*)scene()->parent());
+		designArea->removeVertex(this);
+	}
 }
 
 QJsonObject Vertex::serialize()

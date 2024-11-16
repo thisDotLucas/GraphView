@@ -3,30 +3,58 @@
 #include <chrono>
 #include <thread>
 
+using namespace std::this_thread;
+using namespace std::chrono_literals;
+using std::chrono::system_clock;
+
+namespace
+{
+	struct EdgeAnimator
+	{
+		EdgeAnimator(QtDesignArea* designArea) : m_designArea{ designArea } {}
+
+		~EdgeAnimator()
+		{
+			sleep_for(1s);
+
+			for (auto& edge : m_edges)
+			{
+				edge->highlight(false);
+			}
+			
+			m_designArea->viewport()->repaint();
+		}
+
+		void addEdge(Edge* edge)
+		{
+			m_edges.push_back(edge);
+
+			edge->highlight(true);
+			m_designArea->viewport()->repaint();
+
+			sleep_for(1s);
+		}
+
+		QtDesignArea* m_designArea;
+		std::vector<Edge*> m_edges;
+	};
+}
 void BFSRunner::run(QtDesignArea* designArea, Handle start)
 {
 	graphlite::algorithm::GraphLiteBFS<decltype(designArea->getGraph())> bfs{};
+
+	EdgeAnimator edgeAnimator{ designArea };
 
 	auto f = [&](std::optional<Handle> from, Handle to) 
 	{
 		if (!from.has_value())
 			return false;
 
-		auto edge = designArea->getItem(designArea->getGraph().edgeData(from.value(), to).value());
+		Edge* edge = dynamic_cast<Edge*>(designArea->getItem(designArea->getGraph().edgeData(from.value(), to).value()));
+		if (!edge)
+			return false;
 
-		((Edge*)edge)->highlight(true);
-		((Edge*)edge)->update();
-		designArea->viewport()->repaint();
-
-		using namespace std::this_thread;
-		using namespace std::chrono_literals;
-		using std::chrono::system_clock;
-
-		sleep_for(1s);
-
-		((Edge*)edge)->highlight(false);
-		((Edge*)edge)->update();
-		designArea->viewport()->repaint();
+		edgeAnimator.addEdge(edge);
 
 		return false;
 	};

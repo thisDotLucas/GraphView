@@ -23,8 +23,8 @@ AlgorithmTab::AlgorithmTab(QWidget* parent) : QWidget(parent)
     algorithmLayout->addRow(algorithmMainWidget);
 
 	QFrame* separatorLine = new QFrame(this);
-    separatorLine->setFrameShape(QFrame::HLine);  // Horizontal line
-    separatorLine->setFrameShadow(QFrame::Sunken);
+    separatorLine->setFrameShape(QFrame::HLine);
+	separatorLine->setFrameShadow(QFrame::Sunken);
     algorithmLayout->addRow(separatorLine);
 
     setLayout(algorithmLayout);
