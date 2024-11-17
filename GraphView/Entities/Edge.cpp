@@ -12,12 +12,14 @@ Edge::Edge(Vertex* from, Vertex* to) : m_from{ from }, m_to{ to }
 {
 	initalize();
 	setData(0, getNextHandle());
+	setData(1, 0);
 }
 
 Edge::Edge(QJsonObject json, Vertex* from, Vertex* to) : m_from{ from }, m_to{ to }
 {
 	initalize();
 	setData(0, json["id"].toInt());
+	setData(1, json["weight"].toInt());
 	setNextHandle(json["id"].toInt());
 }
 
@@ -34,6 +36,7 @@ QJsonObject Edge::serialize()
 	json["id"] = static_cast<int>(getHandle(this));
 	json["from"] = static_cast<int>(getHandle(m_from));
 	json["to"] = static_cast<int>(getHandle(m_to));
+	json["weight"] = data(1).toInt();
 
 	return json;
 }
@@ -48,14 +51,15 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
     painter->setPen(pen());
     painter->drawLine(line());
 
+	const double vertexRadius = 15.0; 
+
+	QLineF adjustedLine = line();
+	if (adjustedLine.length() > vertexRadius)
+		adjustedLine.setLength(adjustedLine.length() - vertexRadius);
+
 	if (((Grid*)scene())->isDirectedEdges())
 	{
-		double vertexRadius = 15.0; 
-		double arrowHeadSize = 10.0;
-
-		QLineF adjustedLine = line();
-		if (adjustedLine.length() > vertexRadius)
-			adjustedLine.setLength(adjustedLine.length() - vertexRadius);
+		const double arrowHeadSize = 10.0;
 
 		QPointF tipPoint = adjustedLine.p2(); 
 
@@ -80,6 +84,32 @@ void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWid
 
 		painter->setBrush(pen().color());
 		painter->drawPath(arrowHeadPath);
+	}
+
+	if (((Grid*)scene())->showWeightLabels())
+	{
+		QPointF midpoint = adjustedLine.pointAt(0.5);
+
+		double angleDegrees = adjustedLine.angle();
+		QPointF labelPosition{};
+		if (angleDegrees >= 45 && angleDegrees <= 135)
+		{
+			// Line is roughly vertical; place the label to the right
+			labelPosition = midpoint + QPointF(10, 0);
+		}
+		else 
+		{
+			// Line is roughly horizontal; place the label above
+			labelPosition = midpoint + QPointF(0, -10);
+		}
+
+		QFont font = painter->font();
+		font.setBold(true);
+		font.setPointSizeF(12.0);
+		painter->setFont(font);
+
+		painter->setPen(Qt::black);
+		painter->drawText(labelPosition, QString::number(data(1).toInt()));
 	}
 }
 

@@ -33,6 +33,7 @@ private slots:
 private:
 
 	void notifySceneAboutEdgeDirectionChange(bool isDirected);
+	void notifySceneAboutWeightLabelsToggle(bool show);
 
 	QTabWidget* m_tab{};
 	ObjectTab* m_objectTab{};

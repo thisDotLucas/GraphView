@@ -48,12 +48,12 @@ void ObjectTab::setWidget(QGraphicsItem* object)
         _layout->removeRow(_layout->rowCount() - 1);
     }
 
-    if (dynamic_cast<Vertex*>(object))
+    if (auto vertex = dynamic_cast<Vertex*>(object))
     {
-        _layout->addRow(new VertexObjectTabWidget(this));
+        _layout->addRow(new VertexObjectTabWidget(this, vertex));
     }
-    else if (dynamic_cast<Edge*>(object))
+    else if (auto edge = dynamic_cast<Edge*>(object))
     {
-        _layout->addRow(new EdgeObjectTabWidget(this));
+        _layout->addRow(new EdgeObjectTabWidget(this, edge));
     }
 }

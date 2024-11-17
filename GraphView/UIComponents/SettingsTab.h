@@ -9,7 +9,9 @@ public:
 
 signals:
     void directedEdgesToggled(bool enabled);
+    void showWeightLabelsToggled(bool enabled);
 
 private slots:
     void onDirectedEdgesToggled(int state) { emit directedEdgesToggled(state == Qt::Checked); }
+    void onShowWeightLabelsToggled(int state) { emit showWeightLabelsToggled(state == Qt::Checked); }
 };

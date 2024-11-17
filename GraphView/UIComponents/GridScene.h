@@ -17,6 +17,8 @@ public:
 	const QList<QGraphicsItem*>& getSelectionOrder() const { return m_selectionOrder; }
 	void setDirectedEdges(bool isDirected) { m_directedEdges = isDirected; }
 	bool isDirectedEdges() const { return m_directedEdges; }
+	void setShowWeightLabels(bool show) { m_showWeightLabels = show; }
+	bool showWeightLabels() const { return m_showWeightLabels; }
 
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override
@@ -92,5 +94,6 @@ private:
 	int m_gridsize = 10;
 	bool m_singleSelection{ true };
 	bool m_directedEdges{ false };
+	bool m_showWeightLabels{ false };
 	QList<QGraphicsItem*> m_selectionOrder;
 };

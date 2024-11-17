@@ -19,6 +19,7 @@ Vertex::Vertex(QPointF point, Circle circle)
 	initialize(rect);
 
 	setData(0, getNextHandle());
+	setData(1, "");
 }
 
 void Vertex::initialize(QRectF rect)
@@ -40,6 +41,7 @@ Vertex::Vertex(QJsonObject json)
 {
 	initialize(QRectF{ json["x"].toDouble(), json["y"].toDouble(), json["width"].toDouble(), json["height"].toDouble() });
 	setData(0, json["id"].toInt());
+	setData(0, json["name"].toString());
 	setNextHandle(json["id"].toInt());
 }
 
@@ -64,6 +66,7 @@ QJsonObject Vertex::serialize()
 	json["y"] = rect().y();
 	json["width"] = rect().width();
 	json["height"] = rect().height();
+	json["name"] = data(1).toString();
 
 	return json;
 }

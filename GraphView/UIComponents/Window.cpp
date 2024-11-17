@@ -82,8 +82,10 @@ QtWindow::QtWindow(const std::string& title)
     m_tab->addTab(m_objectTab, "Object");
 
     m_settingsTab = new SettingsTab(this);
-    connect(m_settingsTab, &SettingsTab::directedEdgesToggled, this, 
+    connect(m_settingsTab, &SettingsTab::directedEdgesToggled, this,
         [&](bool enabled) { notifySceneAboutEdgeDirectionChange(enabled); });
+    connect(m_settingsTab, &SettingsTab::showWeightLabelsToggled, this,
+        [&](bool enabled) { notifySceneAboutWeightLabelsToggle(enabled); });
 
     m_tab->addTab(m_settingsTab, "Settings");
 
@@ -147,5 +149,11 @@ void QtWindow::onInsertEdge()
 void QtWindow::notifySceneAboutEdgeDirectionChange(bool isDirected)
 {
     ((Grid*)((QtDesignArea*)(children().back()))->scene())->setDirectedEdges(isDirected);
+    ((QtDesignArea*)(children().back()))->viewport()->repaint();
+}
+
+void QtWindow::notifySceneAboutWeightLabelsToggle(bool show)
+{
+    ((Grid*)((QtDesignArea*)(children().back()))->scene())->setShowWeightLabels(show);
     ((QtDesignArea*)(children().back()))->viewport()->repaint();
 }
