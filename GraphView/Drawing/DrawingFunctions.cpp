@@ -5,6 +5,7 @@
 #include "../Entities/Edge.h"
 #include <algorithm>
 #include <ranges>
+#include "../UIComponents/GridScene.h"
 
 namespace
 {
@@ -16,7 +17,7 @@ namespace
 		if (e.button() == Qt::MouseButton::LeftButton)
 		{
             std::vector<Vertex*> verticies;
-            for (auto&& item : designArea.scene()->selectedItems())
+            for (auto&& item : ((Grid*)designArea.scene())->getSelectionOrder())
             {
                 if (auto vertex = dynamic_cast<Vertex*>(item))
                     verticies.push_back(vertex);
@@ -24,13 +25,13 @@ namespace
 
             if (verticies.size() == 2)
             {
-                for (auto&& item : designArea.scene()->selectedItems())
-                    item->setSelected(false);
+                designArea.scene()->clearSelection();
 
                 auto edge = new Edge{ verticies[0], verticies[1] };
                 designArea.scene()->addItem(edge);
                 designArea.addEdge(verticies[0], verticies[1], edge);
-				designArea.scene()->update();
+                designArea.scene()->update();
+                ((Grid*)designArea.scene())->removeFirstFromSelectionOrder();
             }
 		}
     }

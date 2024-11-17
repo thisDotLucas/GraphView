@@ -3,8 +3,10 @@
 #include <QPainter>
 #include <QGraphicsScene>
 #include <QGraphicsView>
+#include <QPainter>
 #include "../UIComponents/Window.h"
 #include <QLineF>
+#include "../UIComponents/GridScene.h"
 
 Edge::Edge(Vertex* from, Vertex* to) : m_from{ from }, m_to{ to }
 {
@@ -41,6 +43,46 @@ void Edge::highlight(bool on)
 	glowEffect->setEnabled(on);
 }
 
+void Edge::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    painter->setPen(pen());
+    painter->drawLine(line());
+
+	if (((Grid*)scene())->isDirectedEdges())
+	{
+		double vertexRadius = 15.0; 
+		double arrowHeadSize = 10.0;
+
+		QLineF adjustedLine = line();
+		if (adjustedLine.length() > vertexRadius)
+			adjustedLine.setLength(adjustedLine.length() - vertexRadius);
+
+		QPointF tipPoint = adjustedLine.p2(); 
+
+		double dx = adjustedLine.dx(); 
+		double dy = adjustedLine.dy();
+		double length = std::sqrt(dx * dx + dy * dy);
+		QPointF basePoint = tipPoint - QPointF((dx / length) * arrowHeadSize, (dy / length) * arrowHeadSize);
+
+		// Calculate the perpendicular offsets
+		double perpendicularOffsetX = (-dy / length) * arrowHeadSize / 2;
+		double perpendicularOffsetY = (dx / length) * arrowHeadSize / 2;
+
+		// Calculate the left and right points
+		QPointF leftPoint = basePoint + QPointF(perpendicularOffsetX, perpendicularOffsetY);
+		QPointF rightPoint = basePoint - QPointF(perpendicularOffsetX, perpendicularOffsetY);
+
+		QPainterPath arrowHeadPath;
+		arrowHeadPath.moveTo(tipPoint);
+		arrowHeadPath.lineTo(leftPoint);
+		arrowHeadPath.lineTo(rightPoint);
+		arrowHeadPath.closeSubpath();
+
+		painter->setBrush(pen().color());
+		painter->drawPath(arrowHeadPath);
+	}
+}
+
 void Edge::mousePressEvent(QGraphicsSceneMouseEvent* event)
 {
 	((QtWindow*)scene()->views().first()->window())->setActiveObject(this);
@@ -50,7 +92,7 @@ void Edge::mousePressEvent(QGraphicsSceneMouseEvent* event)
 
 void Edge::initalize()
 {
-	update();
+	updateLine();
 
 	QColor black{ 0, 0, 0 };
 	setPen({ black, 2.0 });

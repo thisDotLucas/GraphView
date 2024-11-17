@@ -16,6 +16,7 @@ public:
 	void highlight(bool on);
 
 protected:
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = nullptr) override;
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
 private:

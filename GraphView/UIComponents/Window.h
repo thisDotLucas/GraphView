@@ -9,9 +9,11 @@
 #include <QGraphicsItem>
 #include "ObjectTab.h"
 #include "AlgorithmTab.h"
+#include "SettingsTab.h"
 
 class QtWindow :public QMainWindow
 {
+	Q_OBJECT
 public:
 	QtWindow(const std::string& title);
 
@@ -30,9 +32,12 @@ private slots:
 
 private:
 
+	void notifySceneAboutEdgeDirectionChange(bool isDirected);
+
 	QTabWidget* m_tab{};
 	ObjectTab* m_objectTab{};
 	AlgorithmTab* m_algorithmTab{};
+	SettingsTab* m_settingsTab{};
 
 	friend class QtDesignArea;
 };

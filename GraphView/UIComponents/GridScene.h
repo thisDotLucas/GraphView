@@ -12,7 +12,11 @@ public:
     Grid(QObject* parent) : QGraphicsScene{ parent } {}
 
 	int gridSize() const { return m_gridsize; }
-	void setSingleSelection(bool useSingleSelection) { m_singleSelection = useSingleSelection; }
+	void setSingleSelection(bool useSingleSelection) { m_singleSelection = useSingleSelection; m_selectionOrder.clear(); }
+	void removeFirstFromSelectionOrder() { if (m_selectionOrder.size()) m_selectionOrder.erase(std::begin(m_selectionOrder)); }
+	const QList<QGraphicsItem*>& getSelectionOrder() const { return m_selectionOrder; }
+	void setDirectedEdges(bool isDirected) { m_directedEdges = isDirected; }
+	bool isDirectedEdges() const { return m_directedEdges; }
 
 protected:
     void drawBackground(QPainter* painter, const QRectF& rect) override
@@ -38,25 +42,55 @@ protected:
 
 	void mousePressEvent(QGraphicsSceneMouseEvent* event) override 
     {
-        QGraphicsScene::mousePressEvent(event);
+		if (m_singleSelection)
+		{
+			QGraphicsScene::mousePressEvent(event);
 
-		if (!m_singleSelection)
-			return;
+			QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
 
-        QGraphicsItem* item = itemAt(event->scenePos(), QTransform());
+			if (item && item->flags() & QGraphicsItem::ItemIsSelectable) {
+				for (QGraphicsItem* selectedItem : selectedItems()) {
+					if (selectedItem != item) {
+						selectedItem->setSelected(false);
+					}
+				}
 
-        if (item && item->flags() & QGraphicsItem::ItemIsSelectable) {
-            for (QGraphicsItem* selectedItem : selectedItems()) {
-                if (selectedItem != item) {
-                    selectedItem->setSelected(false);
-                }
-            }
+				item->setSelected(true);
+			}
+		}
+		else
+		{
+			QGraphicsItem* clickedItem = itemAt(event->scenePos(), QTransform());
 
-            item->setSelected(true);
-        }
+			if (event->button() == Qt::LeftButton) 
+			{
+				if (clickedItem) 
+				{
+					if (clickedItem->isSelected()) 
+					{
+						clickedItem->setSelected(false);
+						m_selectionOrder.removeOne(clickedItem);
+					} 
+					else 
+					{
+						clickedItem->setSelected(true);
+						m_selectionOrder.append(clickedItem);
+					}
+				} 
+				else 
+				{
+					clearSelection();
+					m_selectionOrder.clear();
+				}
+			}
+
+			QGraphicsScene::mousePressEvent(event);
+		}
     }
 
 private:
 	int m_gridsize = 10;
 	bool m_singleSelection{ true };
+	bool m_directedEdges{ false };
+	QList<QGraphicsItem*> m_selectionOrder;
 };

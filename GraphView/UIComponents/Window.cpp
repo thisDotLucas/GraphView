@@ -8,10 +8,8 @@
 #include <QFileDialog>
 #include <QString>
 #include "DesignArea.h"
-#include "SettingsTab.h"
-#include "ObjectTab.h"
-#include "AlgorithmTab.h"
 #include "../Serialization/Serialize.h"
+#include "GridScene.h"
 
 namespace
 {
@@ -83,7 +81,11 @@ QtWindow::QtWindow(const std::string& title)
     m_objectTab = new ObjectTab();
     m_tab->addTab(m_objectTab, "Object");
 
-    m_tab->addTab(new SettingsTab(), "Settings");
+    m_settingsTab = new SettingsTab(this);
+    connect(m_settingsTab, &SettingsTab::directedEdgesToggled, this, 
+        [&](bool enabled) { notifySceneAboutEdgeDirectionChange(enabled); });
+
+    m_tab->addTab(m_settingsTab, "Settings");
 
     leftPane->setWidget(m_tab);
 
@@ -140,4 +142,10 @@ void QtWindow::onInsertEdge()
 {
     ((QtDesignArea*)(children().back()))->setMultiSelectionMode();
     ((QtDesignArea*)(children().back()))->setDrawingContext(EdgeDrawingContext{});
+}
+
+void QtWindow::notifySceneAboutEdgeDirectionChange(bool isDirected)
+{
+    ((Grid*)((QtDesignArea*)(children().back()))->scene())->setDirectedEdges(isDirected);
+    ((QtDesignArea*)(children().back()))->viewport()->repaint();
 }
