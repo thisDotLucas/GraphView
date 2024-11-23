@@ -149,6 +149,7 @@ void QtWindow::onInsertEdge()
 void QtWindow::notifySceneAboutEdgeDirectionChange(bool isDirected)
 {
     ((Grid*)((QtDesignArea*)(children().back()))->scene())->setDirectedEdges(isDirected);
+    ((QtDesignArea*)(children().back()))->setIsDirected(isDirected);
     ((QtDesignArea*)(children().back()))->viewport()->repaint();
 }
 

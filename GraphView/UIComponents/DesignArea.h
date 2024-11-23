@@ -19,7 +19,10 @@ public:
 	std::vector<Handle> getEdgesConnectedTo(QGraphicsItem* vertex);
 	void setSingleSelectionMode();
 	void setMultiSelectionMode();
-	auto getGraph() const { return m_graph; }
+	auto getUndirectedGraph() const { return m_undirectedGraph; }
+	auto getDirectedGraph() const { return m_directedGraph; }
+	bool isDirected() const { return m_isDirected; }
+	void setIsDirected(bool isDirected) { m_isDirected = isDirected; }
 
 	bool isInEdgeInsertionMode() const;
 
@@ -30,7 +33,9 @@ protected:
 	virtual void wheelEvent(QWheelEvent* e) override;
 
 private:
-	graphlite::Graph<Handle, graphlite::EdgeType::Undirected, Handle> m_graph;
+	bool m_isDirected{ false };
+	graphlite::Graph<Handle, graphlite::EdgeType::Undirected, Handle> m_undirectedGraph;
+	graphlite::Graph<Handle, graphlite::EdgeType::Directed, Handle> m_directedGraph;
 	std::unordered_map<Handle, QGraphicsItem*> m_items;
 	std::optional<QPointF> m_lastMousePoint;
 	DrawingContext m_drawingContext;

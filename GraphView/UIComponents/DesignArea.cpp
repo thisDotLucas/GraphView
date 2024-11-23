@@ -31,13 +31,15 @@ QtDesignArea::QtDesignArea(QtWindow& parent) : QGraphicsView{ parent.window() }
 
 void QtDesignArea::addVertex(QGraphicsItem* vertex)
 {
-	m_graph.insert(getHandle(vertex)); 
+	m_undirectedGraph.insert(getHandle(vertex)); 
+	m_directedGraph.insert(getHandle(vertex)); 
 	m_items[getHandle(vertex)] = vertex; 
 }
 
 void QtDesignArea::removeVertex(QGraphicsItem* vertex)
 {
-	m_graph.erase(getHandle(vertex));
+	m_undirectedGraph.erase(getHandle(vertex));
+	m_directedGraph.erase(getHandle(vertex));
 }
 
 void QtDesignArea::addEdge(QGraphicsItem* from, QGraphicsItem* to, QGraphicsItem* edge)
@@ -45,17 +47,30 @@ void QtDesignArea::addEdge(QGraphicsItem* from, QGraphicsItem* to, QGraphicsItem
 	Handle fromHandle = getHandle(from);
 	Handle toHandle = getHandle(to);
 
-	m_graph.insert(fromHandle, toHandle, getHandle(edge));
+	m_undirectedGraph.insert(fromHandle, toHandle, getHandle(edge));
+	m_directedGraph.insert(fromHandle, toHandle, getHandle(edge));
 	m_items[getHandle(edge)] = edge;
 }
 
 std::vector<Handle> QtDesignArea::getEdgesConnectedTo(QGraphicsItem* vertex)
 {
 	std::vector<Handle> edges;
-	for (auto&& to : m_graph.edges(getHandle(vertex)))
+
+	if (isDirected())
 	{
-		const Handle from = getHandle(vertex);
-		edges.push_back(m_graph.edgeData(from, to).value());
+		for (auto&& to : m_directedGraph.edges(getHandle(vertex)))
+		{
+			const Handle from = getHandle(vertex);
+			edges.push_back(m_directedGraph.edgeData(from, to).value());
+		}
+	}
+	else
+	{
+		for (auto&& to : m_undirectedGraph.edges(getHandle(vertex)))
+		{
+			const Handle from = getHandle(vertex);
+			edges.push_back(m_undirectedGraph.edgeData(from, to).value());
+		}
 	}
 
 	return edges;

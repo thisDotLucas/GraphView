@@ -6,23 +6,48 @@
 
 void BFSRunner::run(QtDesignArea* designArea, Handle start)
 {
-	graphlite::algorithm::GraphLiteBFS<decltype(designArea->getGraph())> bfs{};
-
-	EdgeAnimator edgeAnimator{ designArea };
-
-	auto f = [&](std::optional<Handle> from, Handle to) 
+	if (designArea->isDirected())
 	{
-		if (!from.has_value())
+		graphlite::algorithm::GraphLiteBFS<decltype(designArea->getDirectedGraph())> bfs{};
+
+		EdgeAnimator edgeAnimator{ designArea };
+
+		auto f = [&](std::optional<Handle> from, Handle to) 
+		{
+			if (!from.has_value())
+				return false;
+
+			Edge* edge = dynamic_cast<Edge*>(designArea->getItem(designArea->getDirectedGraph().edgeData(from.value(), to).value()));
+			if (!edge)
+				return false;
+
+			edgeAnimator.addEdge(edge);
+
 			return false;
+		};
 
-		Edge* edge = dynamic_cast<Edge*>(designArea->getItem(designArea->getGraph().edgeData(from.value(), to).value()));
-		if (!edge)
+		bfs.BFS(designArea->getDirectedGraph(), start, f);
+	}
+	else
+	{
+		graphlite::algorithm::GraphLiteBFS<decltype(designArea->getUndirectedGraph())> bfs{};
+
+		EdgeAnimator edgeAnimator{ designArea };
+
+		auto f = [&](std::optional<Handle> from, Handle to) 
+		{
+			if (!from.has_value())
+				return false;
+
+			Edge* edge = dynamic_cast<Edge*>(designArea->getItem(designArea->getUndirectedGraph().edgeData(from.value(), to).value()));
+			if (!edge)
+				return false;
+
+			edgeAnimator.addEdge(edge);
+
 			return false;
+		};
 
-		edgeAnimator.addEdge(edge);
-
-		return false;
-	};
-
-	bfs.BFS(designArea->getGraph(), start, f);
+		bfs.BFS(designArea->getUndirectedGraph(), start, f);
+	}
 }
