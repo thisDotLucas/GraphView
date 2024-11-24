@@ -4,7 +4,17 @@
 
 void DijkstraRunner::run(QtDesignArea* designArea, Handle start, std::optional<Handle> to)
 {
-	graphlite::algorithm::GraphLiteDijkstra<decltype(designArea->getDirectedGraph())> dijkstra{};
+	auto getWeight = [&](Handle edge)
+	{
+		if (auto edgeItem = dynamic_cast<Edge*>(designArea->getItem(edge)))
+		{
+			return edgeItem->data(1).toInt();
+		}
+
+		return std::numeric_limits<int>::max();
+	};
+
+	graphlite::algorithm::GraphLiteDijkstra<decltype(designArea->getDirectedGraph()), decltype(getWeight)> dijkstra{};
 
 	VertexAnimator animator{ designArea };
 
@@ -19,16 +29,6 @@ void DijkstraRunner::run(QtDesignArea* designArea, Handle start, std::optional<H
 		return vertex == to.value();
 	};
 	
-	auto getWeight = [&](Handle edge)
-	{
-		if (auto edgeItem = dynamic_cast<Edge*>(designArea->getItem(edge)))
-		{
-			return edgeItem->data(1).toInt();
-		}
-
-		return std::numeric_limits<int>::max();
-	};
-
 	dijkstra.Dijkstra(designArea->getDirectedGraph(), start, f, getWeight);
 
 	if (to.has_value())
