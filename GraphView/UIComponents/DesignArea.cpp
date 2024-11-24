@@ -55,22 +55,10 @@ void QtDesignArea::addEdge(QGraphicsItem* from, QGraphicsItem* to, QGraphicsItem
 std::vector<Handle> QtDesignArea::getEdgesConnectedTo(QGraphicsItem* vertex)
 {
 	std::vector<Handle> edges;
-
-	if (isDirected())
+	for (auto&& to : m_undirectedGraph.edges(getHandle(vertex)))
 	{
-		for (auto&& to : m_directedGraph.edges(getHandle(vertex)))
-		{
-			const Handle from = getHandle(vertex);
-			edges.push_back(m_directedGraph.edgeData(from, to).value());
-		}
-	}
-	else
-	{
-		for (auto&& to : m_undirectedGraph.edges(getHandle(vertex)))
-		{
-			const Handle from = getHandle(vertex);
-			edges.push_back(m_undirectedGraph.edgeData(from, to).value());
-		}
+		const Handle from = getHandle(vertex);
+		edges.push_back(m_undirectedGraph.edgeData(from, to).value());
 	}
 
 	return edges;

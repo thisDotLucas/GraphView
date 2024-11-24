@@ -41,7 +41,7 @@ Vertex::Vertex(QJsonObject json)
 {
 	initialize(QRectF{ json["x"].toDouble(), json["y"].toDouble(), json["width"].toDouble(), json["height"].toDouble() });
 	setData(0, json["id"].toInt());
-	setData(0, json["name"].toString());
+	setData(1, json["name"].toString());
 	setNextHandle(json["id"].toInt());
 }
 
@@ -55,6 +55,20 @@ Vertex::~Vertex()
 		auto designArea = ((QtDesignArea*)scene()->parent());
 		designArea->removeVertex(this);
 	}
+}
+
+void Vertex::paintAlternativeColor()
+{
+    setBrush(QBrush(Qt::green));
+	setPen({ Qt::green });
+    update();
+}
+
+void Vertex::paintOriginalColor()
+{
+	QColor color = QColor{ 3, 136, 252 };
+	setPen({ color });
+	setBrush(color);
 }
 
 QJsonObject Vertex::serialize()

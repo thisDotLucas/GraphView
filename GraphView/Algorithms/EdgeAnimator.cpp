@@ -25,5 +25,5 @@ void EdgeAnimator::addEdge(Edge* edge)
 	edge->highlight(true);
 	m_designArea->viewport()->repaint();
 
-	sleep_for(1s);
+	sleep_for(m_speedUp ? 0.3s : 1s);
 }

@@ -4,7 +4,7 @@
 #include <chrono>
 #include <thread>
 
-void DFSRunner::run(QtDesignArea* designArea, Handle start)
+void DFSRunner::run(QtDesignArea* designArea, Handle start, std::optional<Handle>)
 {
 	if (designArea->isDirected())
 	{

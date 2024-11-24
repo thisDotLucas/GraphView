@@ -12,6 +12,9 @@ public:
 	Vertex(QJsonObject json);
 	~Vertex();
 
+	void paintAlternativeColor();
+	void paintOriginalColor();
+
 	QJsonObject serialize() override;
 
 protected:
